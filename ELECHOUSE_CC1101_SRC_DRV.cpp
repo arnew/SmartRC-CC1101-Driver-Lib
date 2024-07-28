@@ -141,6 +141,7 @@ void ELECHOUSE_CC1101::Reset (void)
 	delay(1);
 	digitalWrite(SS_PIN, LOW);
 	while(digitalRead(MISO_PIN));
+	SPI.beginTransaction(SPISettings());
   SPI.transfer(CC1101_SRES);
   while(digitalRead(MISO_PIN));
 	digitalWrite(SS_PIN, HIGH);
@@ -154,7 +155,11 @@ void ELECHOUSE_CC1101::Reset (void)
 void ELECHOUSE_CC1101::Init(void)
 {
   setSpi();
+#if ESP32
   SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN);
+#else
+  SPI.begin();
+#endif
   SpiStart();                   //spi initialization
   digitalWrite(SS_PIN, HIGH);
   digitalWrite(SCK_PIN, HIGH);
